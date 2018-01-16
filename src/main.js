@@ -2,8 +2,6 @@
 Object.defineProperty(exports, "__esModule", {value: true});
 
 const electron = require("electron");
-const wpilib_NT = require("wpilib-nt-client");
-const client = new wpilib_NT.Client();
 
 /** Module to control application life. */
 const app = electron.app;
@@ -14,8 +12,6 @@ const BrowserWindow = electron.BrowserWindow;
 /** Module to create global shortcuts */
 const globalShortcut = electron.globalShortcut;
 
-/** Module for receiving messages from the BrowserWindow */
-const ipc = electron.ipcMain;
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -29,44 +25,6 @@ let mainWindow;
 let connected, ready = false;
 
 function createWindow() {
-    // Attempt to connect to the localhost
-    client.start((con, err) => {
-        // If the Window is ready than send the connection status to it
-        if (ready) {
-            mainWindow.webContents.send('connected', con);
-        }
-        else
-            connected = () => mainWindow.webContents.send('connected', con);
-    });
-    // When the script starts running in the window set the ready variable
-    ipc.on('ready', (ev, mesg) => {
-        ready = true;
-        // Send connection message to the window if if the message is ready
-        if (connected)
-            connected();
-    });
-    // When the user chooses the address of the bot than try to connect
-    ipc.on('connect', (ev, address, port) => {
-        let callback = (connected, err) => {
-            mainWindow.webContents.send('connected', connected);
-        };
-        if (port) {
-            client.start(callback, address, port);
-        }
-        else {
-            client.start(callback, address);
-        }
-    });
-    ipc.on('add', (ev, mesg) => {
-        client.Assign(mesg.val, mesg.key, (mesg.flags & 1) === 1);
-    });
-    ipc.on('update', (ev, mesg) => {
-        client.Update(mesg.id, mesg.val);
-    });
-    // Listens to the changes coming from the client
-    client.addListener((key, val, valType, mesgType, id, flags) => {
-        mainWindow.webContents.send(mesgType, {key, val, valType, id, flags});
-    });
     // Create the browser window.
     mainWindow = new BrowserWindow({
         width: 1366,
@@ -88,10 +46,9 @@ function createWindow() {
     globalShortcut.register('F5', () => {
         BrowserWindow.getFocusedWindow().webContents.reloadIgnoringCache();
     });
-    globalShortcut.register('F12', () => {
+    globalShortcut.register('F9', () => {
         mainWindow.toggleDevTools();
     });
-
     // Remove menu
     mainWindow.setMenu(null);
     // Emitted when the window is closed.
