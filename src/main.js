@@ -1,5 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, "__esModule", {value: true});
 
 const electron = require("electron");
 const wpilib_NT = require("wpilib-nt-client");
@@ -10,6 +10,9 @@ const app = electron.app;
 
 /** Module to create native browser window.*/
 const BrowserWindow = electron.BrowserWindow;
+
+/** Module to create global shortcuts */
+const globalShortcut = electron.globalShortcut;
 
 /** Module for receiving messages from the BrowserWindow */
 const ipc = electron.ipcMain;
@@ -24,6 +27,7 @@ let mainWindow;
 
 
 let connected, ready = false;
+
 function createWindow() {
     // Attempt to connect to the localhost
     client.start((con, err) => {
@@ -61,7 +65,7 @@ function createWindow() {
     });
     // Listens to the changes coming from the client
     client.addListener((key, val, valType, mesgType, id, flags) => {
-        mainWindow.webContents.send(mesgType, { key, val, valType, id, flags });
+        mainWindow.webContents.send(mesgType, {key, val, valType, id, flags});
     });
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -81,6 +85,13 @@ function createWindow() {
         mainWindow.show();
     });
 
+    globalShortcut.register('F5', () => {
+        BrowserWindow.getFocusedWindow().webContents.reloadIgnoringCache();
+    });
+    globalShortcut.register('F12', () => {
+        mainWindow.toggleDevTools();
+    });
+
     // Remove menu
     mainWindow.setMenu(null);
     // Emitted when the window is closed.
@@ -91,6 +102,7 @@ function createWindow() {
         mainWindow = null;
     });
 }
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 app.on('ready', () => {
