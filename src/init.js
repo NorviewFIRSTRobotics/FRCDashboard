@@ -7,9 +7,11 @@ function home() {
 }
 
 let file = path.join(home(), "/modules.json");
-
-if(!fs.exists(file))
+console.log(file);
+if(!fs.existsSync(file)) {
     file = "./modules.json";
+    console.log("Using default:",file);
+}
 
 dashmod.load(file);
 
