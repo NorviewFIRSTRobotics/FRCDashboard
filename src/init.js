@@ -12,3 +12,4 @@ if(!fs.exists(file))
     file = "./modules.json";
 
 dashmod.load(file);
+

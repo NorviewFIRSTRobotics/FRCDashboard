@@ -26,6 +26,6 @@
   },
   "dependencies": {
     "wpilib-nt-client": "^1.3.0",
-    "dashmod": "^1.0.1"
+    "dashmod": "^1.0.3"
   }
 }
