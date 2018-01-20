@@ -3,9 +3,15 @@
     {
       "type": "header",
       "data": {
-        "background": "#345763",
-        "color": "#FF00FF",
-        "title": "Default Config"
+        "title": "Field Diagram"
+      }
+    },
+    {
+      "type": "field",
+      "data": {
+        "width": 650,
+        "height": 300,
+        "team": 1793
       }
     }
   ]
